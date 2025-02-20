@@ -17,14 +17,13 @@ const Login: FunctionComponent<LoginProps> = () => {
     onSubmit: (values) => {
       checkUser(values)
         .then((res) => {
-          if (res.data.length) {
-            navigate("/home");
-            localStorage.setItem("userId", JSON.stringify(res.data[0].id));
-          } else {
-            alert("No such user");
-          }
+          navigate("/home");
+          localStorage.setItem("token", JSON.stringify(res.data));
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          alert("Invalid email or password");
+          console.log(err);
+        });
     },
   });
   return (

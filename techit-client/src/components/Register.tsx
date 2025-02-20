@@ -20,12 +20,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
       addUser({ ...values, isAdmin: false })
         .then((res) => {
           navigate("/home");
-          localStorage.setItem("userId", JSON.stringify(res.data.id));
-          createCart(res.data.id)
-            .then((res) => {
-              console.log("Cart created successfully");
-            })
-            .catch((err) => console.log(err));
+          localStorage.setItem("token", JSON.stringify(res.data));
         })
         .catch((err) => console.log(err));
     },

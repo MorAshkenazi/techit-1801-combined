@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const users = require("./routes/users");
+const products = require("./routes/products");
 require("dotenv").config();
 
 const app = express();
@@ -21,5 +22,6 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 app.use("/api/users", users);
+app.use("/api/products", products);
 
 app.listen(port, () => console.log("Server started on port", port));

@@ -15,8 +15,11 @@ export function addUser(user: User) {
 
 // profile
 export function getUserById() {
-  const id = JSON.parse(localStorage.getItem("userId") as string);
-  return axios.get(api + "/" + id);
+  return axios.get(`${api}/profile`, {
+    headers: {
+      Authorization: JSON.parse(localStorage.getItem("token") as string),
+    },
+  });
 }
 
 // export async function checkIfAdmin() {
