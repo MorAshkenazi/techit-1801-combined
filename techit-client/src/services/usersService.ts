@@ -5,7 +5,7 @@ const api: string = `${process.env.REACT_APP_API}/users`;
 
 // login
 export function checkUser(user: User) {
-  return axios.get(`${api}?email=${user.email}&&password=${user.password}`);
+  return axios.post(`${api}/login`, user);
 }
 
 // register
