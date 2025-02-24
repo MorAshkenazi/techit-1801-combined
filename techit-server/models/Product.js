@@ -26,6 +26,14 @@ const productSchema = new Schema({
     default:
       "https://www.shutterstock.com/image-vector/missing-picture-page-website-design-600nw-1552421075.jpg",
   },
+  available: {
+    type: Boolean,
+    default: true,
+  },
+  quantity: {
+    type: Number,
+    default: 5,
+  },
 });
 
 const Product = model("products", productSchema);

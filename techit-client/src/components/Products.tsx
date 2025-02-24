@@ -2,7 +2,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { Product } from "../interfaces/Product";
 import { getAllProducts } from "../services/productsService";
 import Navbar from "./Navbar";
-import { getUserById } from "../services/usersService";
+import { getPayloadFromToken, getUserById } from "../services/usersService";
 import AddProductModal from "./AddProductModal";
 import UpdateProductModal from "./UpdateProductModal";
 import DeleteProductModal from "./DeleteProductModal";
@@ -21,10 +21,9 @@ const Products: FunctionComponent<ProductsProps> = () => {
 
   useEffect(() => {
     // check if admin
-    if (localStorage.getItem("userId") != null) {
-      getUserById()
-        .then((res) => setIsAdmin(res.data.isAdmin))
-        .catch((err) => console.log(err));
+    if (localStorage.getItem("token") != null) {
+      let payload = getPayloadFromToken();
+      setIsAdmin(payload.isAdmin);
     }
   }, []);
 
