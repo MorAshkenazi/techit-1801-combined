@@ -32,7 +32,7 @@ export function addProduct(product: Product) {
 
 // update product
 export function updateProduct(product: Product) {
-  return axios.put(`${api}/${product.id}`, product, {
+  return axios.put(`${api}/${product._id}`, product, {
     headers: {
       Authorization: JSON.parse(localStorage.getItem("token") as string),
     },

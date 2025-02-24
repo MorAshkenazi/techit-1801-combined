@@ -60,7 +60,7 @@ const Products: FunctionComponent<ProductsProps> = () => {
               (product: Product) =>
                 product.available && (
                   <div
-                    key={product.id}
+                    key={product._id}
                     className="card col-md-4"
                     style={{ width: "18rem" }}
                   >
@@ -78,7 +78,7 @@ const Products: FunctionComponent<ProductsProps> = () => {
                       <button
                         className="btn btn-primary"
                         onClick={() => {
-                          addToCart(product.id as string)
+                          addToCart(product._id as string)
                             .then(() => {
                               alert("Product was added successfully");
                             })
@@ -93,7 +93,7 @@ const Products: FunctionComponent<ProductsProps> = () => {
                             className="btn btn-warning mx-1"
                             onClick={() => {
                               setOpenUpdateModal(true);
-                              setProductId(product.id as string);
+                              setProductId(product._id as string);
                             }}
                           >
                             <i className="fa-solid fa-pen"></i>
@@ -102,7 +102,7 @@ const Products: FunctionComponent<ProductsProps> = () => {
                             className="btn btn-danger"
                             onClick={() => {
                               setOpenDeleteModal(true);
-                              setProductId(product.id as string);
+                              setProductId(product._id as string);
                             }}
                           >
                             <i className="fa-solid fa-trash"></i>

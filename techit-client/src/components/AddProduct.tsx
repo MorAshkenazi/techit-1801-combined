@@ -26,7 +26,7 @@ const AddProduct: FunctionComponent<AddProductProps> = ({
       price: yup.number().required().moreThan(0),
       category: yup.string().required().min(2),
       description: yup.string().required().min(2),
-      image: yup.string().required().url(),
+      image: yup.string().url(),
     }),
     onSubmit: (values) => {
       addProduct({ ...values, available: true })
