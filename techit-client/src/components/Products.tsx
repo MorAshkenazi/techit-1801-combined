@@ -56,63 +56,68 @@ const Products: FunctionComponent<ProductsProps> = () => {
         )}
         <div className="row mt-3">
           {products.length ? (
-            products.map(
-              (product: Product) =>
-                product.available && (
-                  <div
-                    key={product._id}
-                    className="card col-md-4"
-                    style={{ width: "18rem" }}
+            products.map((product: Product) => (
+              <div
+                key={product._id}
+                className="card col-md-4"
+                style={{ width: "18rem" }}
+              >
+                <div className="card-header">{product.category}</div>
+                <img
+                  src={product.image}
+                  className="card-img-top"
+                  alt={product.name}
+                  title={product.name}
+                />
+                <div className="card-body">
+                  <h5 className="card-title">{product.name}</h5>
+                  <p className="card-text">{product.description}</p>
+                  <p className="card-text text-success">{product.price}$</p>
+                  <p className="card-text">
+                    {product.quantity ? (
+                      <span className="text-primary">In stock</span>
+                    ) : (
+                      <span className="text-danger">Out of stock</span>
+                    )}
+                  </p>
+                  <button
+                    className="btn btn-primary"
+                    disabled={!product.available}
+                    onClick={() => {
+                      addToCart(product._id as string)
+                        .then(() => {
+                          alert("Product was added successfully");
+                        })
+                        .catch((err) => console.log(err));
+                    }}
                   >
-                    <div className="card-header">{product.category}</div>
-                    <img
-                      src={product.image}
-                      className="card-img-top"
-                      alt={product.name}
-                      title={product.name}
-                    />
-                    <div className="card-body">
-                      <h5 className="card-title">{product.name}</h5>
-                      <p className="card-text">{product.description}</p>
-                      <p className="card-text text-success">{product.price}$</p>
+                    <i className="fa-solid fa-cart-shopping"></i>
+                  </button>
+                  {isAdmin && (
+                    <span>
                       <button
-                        className="btn btn-primary"
+                        className="btn btn-warning mx-1"
                         onClick={() => {
-                          addToCart(product._id as string)
-                            .then(() => {
-                              alert("Product was added successfully");
-                            })
-                            .catch((err) => console.log(err));
+                          setOpenUpdateModal(true);
+                          setProductId(product._id as string);
                         }}
                       >
-                        <i className="fa-solid fa-cart-shopping"></i>
+                        <i className="fa-solid fa-pen"></i>
                       </button>
-                      {isAdmin && (
-                        <span>
-                          <button
-                            className="btn btn-warning mx-1"
-                            onClick={() => {
-                              setOpenUpdateModal(true);
-                              setProductId(product._id as string);
-                            }}
-                          >
-                            <i className="fa-solid fa-pen"></i>
-                          </button>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => {
-                              setOpenDeleteModal(true);
-                              setProductId(product._id as string);
-                            }}
-                          >
-                            <i className="fa-solid fa-trash"></i>
-                          </button>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )
-            )
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => {
+                          setOpenDeleteModal(true);
+                          setProductId(product._id as string);
+                        }}
+                      >
+                        <i className="fa-solid fa-trash"></i>
+                      </button>
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))
           ) : (
             <p>No products </p>
           )}

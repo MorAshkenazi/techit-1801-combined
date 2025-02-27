@@ -3,7 +3,6 @@ import { FunctionComponent } from "react";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { addUser } from "../services/usersService";
-import { createCart } from "../services/cartsService";
 
 interface RegisterProps {}
 

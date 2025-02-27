@@ -6,47 +6,34 @@ const router = express.Router();
 
 router.patch("/", auth, async (req, res) => {
   try {
-    // שומרים ids
-    // של מוצרים במערך
-    // צריך לבדוק quantity
-    // [{productId, quantity}]
-    // body contains only productId (in object)
+    // body contains {productId, quantity}
 
-    // check if productId is valid
+    // check if product exist/valid
     let product = await Product.findById(req.body.productId);
     if (!product) return res.status(404).send("No such product");
 
-    if (product.quantity) {
-      // get user cart
-      const cart = await Cart.findOne({
-        userId: req.payload._id,
-        active: true,
-      });
-      if (!cart) return res.status(400).send("No active cart");
+    // check if product not in stock
+    if (!product.quantity) return res.status(400).send("Product out of stock");
 
-      // check if product already exists in user cart
-      let productToAddIndex = cart.products.findIndex(
-        (p) => p.productId == req.body.productId
-      );
-      // product does not exists in cart
-      if (productToAddIndex == -1) {
-        cart.products.push({ productId: req.body.productId, quantity: 1 });
-      } else {
-        // product already exists in cart
-        cart.products[productToAddIndex].quantity++;
-        // inform mongoose subdoc changed
-        cart.markModified("products");
-      }
-      await cart.save();
+    // get user cart
+    let cart = await Cart.findOne({ userId: req.payload._id, active: true });
+    if (!cart) return res.status(404).send("No such cart");
 
-      // reduce total quantity of product
-      product.quantity--;
-      if (product.quantity == 0) product.available = false;
-      await product.save();
-      res.status(200).send("Product has been added to cart");
+    // check if product already exists
+    let indexToAdd = cart.products.findIndex(
+      (p) => p.productId === req.body.productId
+    );
+    if (indexToAdd != -1) {
+      cart.products[indexToAdd].quantity++;
+      cart.markModified("products");
     } else {
-      res.status(400).send("Product is not available");
+      cart.products.push({ productId: req.body.productId, quantity: 1 });
     }
+    await cart.save();
+    product.quantity--;
+    if (!product.quantity) product.available = false;
+    await product.save();
+    res.status(200).send("Product has been added to cart");
   } catch (error) {
     res.status(400).send(error);
   }
@@ -56,31 +43,28 @@ router.get("/", auth, async (req, res) => {
   try {
     // get user cart
     const cart = await Cart.findOne({ userId: req.payload._id, active: true });
-    if (!cart) return res.status(400).send("No active cart");
+    if (!cart) return res.status(404).send("No such cart");
 
-    let promises = [];
-    // build promises array for promise.all
-    for (let item of cart.products) {
-      promises.push(Product.findById(item.productId));
+    // create array of promises
+    let promises = cart.products.map((p) => Product.findById(p.productId));
+
+    // promise all
+    let result = await Promise.all(promises);
+    if (!result) return res.status(400).send("Error in products");
+
+    // combine between cart.products and result
+    let cartItems = [];
+    for (let i in result) {
+      if (result[i])
+        cartItems.push({
+          ...result[i].toObject(),
+          ...cart.products[i].toObject(),
+        });
     }
-
-    Promise.all(promises)
-      .then((result) => {
-        let cartItems = [];
-        // unite the arrays
-        for (let i in result)
-          cartItems.push({
-            // toObject - convert doc to object
-            // the product properties
-            ...result[i].toObject(),
-            // the product quantity (chosen by user)
-            ...cart.products[i].toObject(),
-          });
-        res.status(200).send(cartItems);
-      })
-      .catch((error) => res.status(400).send(error));
+    res.status(200).send(cartItems);
   } catch (error) {
     res.status(400).send(error);
   }
 });
+
 module.exports = router;
